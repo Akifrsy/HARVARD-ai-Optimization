@@ -1,0 +1,148 @@
+Optimization: Choosing the best option from a set of options.
+
+Local Search: Search algorithms that maintain a single node and searches by moving to a neighboring node.
+
+Hill Climbing:
+    function Hill-Climb(problem):
+        current = initial state of problem 
+        repeat:
+            neighbor = highest values neighbor of current
+            if neighbor not better than current:
+                return current
+            current = neighbor
+
+                                        
+                                        
+                    Hill Climbing Variants
+
+Variant |                  Definition 
+
+Steepest-Ascent | Choose the highest-vauled neighbor.
+Stochastic | Choose randomly from higher-valued neighbors.
+First-Choice | Choose the first higher-valued neighbor.
+Random-Restart | Conduct hill climbing multiple times.
+Local Beam Search | Chooses the k highest-valued neighbors. 
+
+Simulated Annealing: 
+    -Early on, higher "temperature": more likely to accept neighbors that are worse than current state.
+    
+    -Later on, lower "temperature": less likely to accept neighbors that are worse than current state.
+
+SIMULATED ANNEALING:
+    function simulated-annealing(problem, max):
+        current = initial state of problem
+        for t = 1 to max:
+         T = temperature(t)
+         neighbor = random neighbor of current
+         AE = how much better neighbır is than current 
+         if AE>O:
+            current = neighbor 
+        with probability eAE/T set current = neighbor 
+    return current
+
+Linear Programming
+    -Minimize a cost function c1x1 + c2x2 + ... + cnxn
+    -With constraints of form a1x1 + a2x2 + ... + anxn < b 
+     or of form a1x1 + a2x2 + ... + anxn = b
+    -With bounds for each variable li < xi < ui
+
+Linear Programming Example 
+    -Two machines X1 and X2. X1 costs $50/hour to run, X2 costs $80/hour to run. Goal is to minimize cost.
+            
+            Cost Function: 50x1 + 80x2
+
+    -X1 requires 5 units of labor per hour. X2 requires 2 units of labor per hour. Total of 20 units of labor to spend.
+
+            Constraint: 5x1 + 2x2 < 20
+
+    -X1 produces 10 units of output per hour X2 produces 12 units of output per hour. Company needs 90 units of output.
+
+            Constraint: 10x1 + 12x2 > 90 / (-10x1) + (-12x2) < -90
+
+Linear Programming algorithms
+    
+    -Simplex
+    -Interior-Point
+
+Constraint Satisfaction problem
+    -Set of variables {X1, X2, ..., Xn}
+    -Set of domains for each variable {D1, D2, ..., Dn}
+    -Set of constraints C 
+
+Hard Constraints: Constraints that must be satisfied in a correct solution.
+
+Soft Constraints: Constraints that express some notion of which solutions are preferred over others.
+
+Unary Constraint: Constraint involing only one variable.
+    {A =/ Monday}
+
+Binary Constraint: Constraint involing two variables.
+    {A =/ B}
+
+Node Consistency: When all the values in a variable's domain satisfy the variable's unary constraints.
+
+Arc Consistency: When all the values in a variable's domain satisfy the variable's binary constraints.
+
+    -To make X arc-consistent with respect to Y, remove elements from X's domain until every choice for X has a possible choice for Y
+
+    function Revise(csp, X, Y):
+        revised = false
+        for x in X.domain:
+            if no y in Y.domain satisfies constraint for (X, Y):
+                delete x from X.domain
+                revised = true
+        return revised
+
+        function AC-3(csp):
+            queue =  all arcs in csp
+            while queue non-empty:
+                (X, Y) = DEQUEUE(queue)
+                if REVISE(csp, X, Y):
+                    if size of X.domain == O:
+                        return false
+                    for each Z in X.neighbors - {Y}:
+                        Enaqueue(queue, (Z, X))
+            return true
+
+CSPs as Search Problems
+    -Initial State: Empty assignment (no variables)
+    -Actions: Add a {variable = value} to assignment
+    -Transition Model: Shows How adding an assignment changes the assignment
+    -Goal Test: Check if all variables assigned and contraints all satisfied
+    -Path Cost Function: All paths have same cost
+
+Backtracking Search:
+    function Backtrack(assignment, csp):
+        if assignment complete: return assignment
+        var = Select-Unassigned-Var(assignment, csp)
+        for value in Domain-Values(var, assignment, csp):
+            if valuıe consistent with assignment:
+                add {var = value} to assignment
+                result = Backtrack(assignmenti csp)
+                if result =/ failure: return result
+            remove {var = value} from assignment
+
+Maintaining arc-consistency: Algorithm for enforcing arc-consistency every time we make a new assignment.
+    When we make a new assignment to X, calls AC-3, starting with a queue of all arcs(Y, X)
+     where Y is a neighbor of X 
+
+     function Backtrack(assignment, csp):
+        if assignment complete: return assignment
+        var = Select-Unassigned-Var(assignment, csp)
+        for value in Domain-Values(var, assignment, csp):
+            if value consistent with assignment:
+            add {var = value} to assignment
+            inferences = Inference(assignment, csp)
+            if inferences =/ failure: add inferences to assignment
+            result =/ Backtrack(assignment, csp)
+            if result =/ failure: return result
+        remove {var = value} and inferences from assignment 
+    return failure
+
+Select-Unassigned-Var: 
+    -Minimum remaining values (MRV) heuristic: Select the variable that has the smallest domain.
+    -Degree heuristic: select the variable that thas the highest degree.
+
+Domain-Values
+    -Least-Constraining values heuristic: return variables in order by number of choices that are ruled out for neighboring variables
+    -Try Least-Constraining values first
